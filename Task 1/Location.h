@@ -1,14 +1,30 @@
 #pragma once
+#include <tuple>
+
+enum Direction {
+	North = 0,
+	South,
+	East, 
+	West,
+	Nil = 255
+};
+
+// degrees, minutes, direction
+#define Coordinate std::tuple<uint8_t, float, Direction>
 
 class Location
 {
 private:
-	uint8_t degrees;
-	float minutes;
-	char direction;
+	Coordinate lon;
+	Coordinate lat;
 public:
 	Location() = default; // I don't get it why is this needed?
-	Location(uint8_t deg, float min, char dir);
+	Location(Coordinate longtitude, Coordinate latitude);
 
+	void get_pos();
+	void display();
+
+private:
+	static Direction parse_direction(char from);
 };
 
