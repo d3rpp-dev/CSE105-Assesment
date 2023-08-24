@@ -25,7 +25,7 @@ std::string Triangle::draw_shape()
 float Triangle::calculate_area()
 {
 	float semi = 0.5f * (side_1 + side_2 + side_3);
-	return sqrtf(semi * (semi - side_1) * (semi - side_2) * (semi - side_3));
+	return sqrt(semi * (semi - side_1) * (semi - side_2) * (semi - side_3));
 }
 
 float Triangle::calculate_perimeter()

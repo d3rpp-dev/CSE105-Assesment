@@ -126,8 +126,8 @@ void Location::display() const
 	// in rust you can just use tuple.0, instead of std::get<0>(tuple), weird.
 	std::cout
 		<< "Position: "
-		<< std::get<0>(lat) << "°" << std::setprecision(2) << std::fixed << std::get<1>(lat) << " " << std::get<2>(lat) << " Latitude"
-		<< std::get<0>(lon) << "°" << std::setprecision(2) << std::fixed << std::get<1>(lon) << " " << std::get<2>(lon) << " Longitude"
+		<< std::get<0>(lat) << "°" << std::setprecision(2) << std::fixed << std::get<1>(lat) << " " << std::get<2>(lat) << " Latitude "
+		<< std::get<0>(lon) << "°" << std::setprecision(2) << std::fixed << std::get<1>(lon) << " " << std::get<2>(lon) << " Longitude "
 		<< std::endl;
 }
 
