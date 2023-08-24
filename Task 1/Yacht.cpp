@@ -20,7 +20,7 @@ void Yacht::get_pos()
 	location.get_pos();
 }
 
-void Yacht::display()
+void Yacht::display() const
 {
 	std::cout
 		<< std::endl
@@ -29,7 +29,6 @@ void Yacht::display()
 		<< std::endl;
 	location.display();
 }
-
 
 Yacht::Yacht(const uint16_t& id, const Location& loc)
 	: id(id), location(loc)

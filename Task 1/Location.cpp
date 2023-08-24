@@ -1,7 +1,7 @@
 #include "Location.h"
 #include <cstdint>
 
-#include "Utils.h"
+#include "../Utils/Utils.h"
 
 bool direction_is_longtitude(Direction& dir) {
 	switch (dir) {
@@ -120,14 +120,14 @@ void Location::get_pos()
 		std::swap(lat, lon);
 }
 
-void Location::display()
+void Location::display() const
 {
 	// c++ tuples are weird
 	// in rust you can just use tuple.0, instead of std::get<0>(tuple), weird.
 	std::cout
 		<< "Position: "
-		<< std::get<0>(lat) << "\xF8" << std::setprecision(2) << std::fixed << std::get<1>(lat) << " " << std::get<2>(lat) << " Latitude"
-		<< std::get<0>(lon) << "\xF8" << std::setprecision(2) << std::fixed << std::get<1>(lon) << " " << std::get<2>(lon) << " Longitude"
+		<< std::get<0>(lat) << "°" << std::setprecision(2) << std::fixed << std::get<1>(lat) << " " << std::get<2>(lat) << " Latitude"
+		<< std::get<0>(lon) << "°" << std::setprecision(2) << std::fixed << std::get<1>(lon) << " " << std::get<2>(lon) << " Longitude"
 		<< std::endl;
 }
 

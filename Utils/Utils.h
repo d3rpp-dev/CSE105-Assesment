@@ -11,6 +11,8 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
+#include <functional>
+#include <optional>
 
 
 constexpr auto PROMPT = " > ";
@@ -22,7 +24,7 @@ constexpr auto BLUE = "\x1b[94;40m";
 constexpr auto CYAN = "\x1b[96;40m";
 
 
-void clear() {
+static void clear() {
 	COORD topLeft = { 0, 0 };
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO screen;
@@ -38,49 +40,6 @@ void clear() {
 	);
 	SetConsoleCursorPosition(console, topLeft);
 }
-
-struct Item {
-	uint8_t id;
-	std::string name;
-	float price;
-
-	std::string display() {
-		std::stringstream ss;
-		ss << (price < 0.0f ? "  " : "") << name;
-
-		for (uint8_t _i = 0; _i < (25 - (name.length() + (price < 0.0f ? 2 : 0))); _i++) {
-			ss << ' ';
-		}
-
-		if (price < 0.0f)
-			ss << " -$";
-		else
-			ss << "  $";
-
-		ss << std::setprecision(2) << std::abs(price);
-
-		return ss.str();
-	}
-};
-
-
-const Item FOOD_PRICE[11] = {
-	// food
-	{1, "PIE", 3.0},
-	{2, "HAMBURGER", 3.50},
-	{3, "SAUSAGE ROLL", 3.0},
-	{4, "CHICKEN WRAP", 5.0},
-	{5, "CHOCOLATE MUFFIN", 2.50},
-	{6, "BROWNIE", 2.0},
-
-	// drinks
-	{7, "COKE", 2.0},
-	{8, "ORANGE JUICE", 2.0},
-	{9, "APPLE JUICE", 2.0},
-	{10, "SPRITE", 2.0},
-	{11, "L&P", 2.0}
-};
-
 
 namespace trim {
 	/*
@@ -152,6 +111,8 @@ namespace utils {
 		std::cin.clear();
 		std::getline(std::cin, a);
 
+		trim::trim(a);
+
 		if (a == "") return '\0';
 		else return a[0];
 	}
@@ -170,13 +131,22 @@ namespace utils {
 		return o.size() > 0 ? o[0] : "";
 	}
 
-	static inline std::string get_line(std::string prompt) {
-		std::cout << BLUE << prompt << RESET << std::endl << PROMPT;
+	static inline std::string get_line(std::string prompt, bool allow_empty = true) {
 		std::string a{};
+		std::cout << BLUE << prompt << RESET << std::endl;
 
-		std::cin.clear();
-		std::getline(std::cin, a);
-		std::cin.clear();
+		while (true) {
+			std::cout << PROMPT;
+
+			std::cin.clear();
+			std::getline(std::cin, a);
+			std::cin.clear();
+
+			trim::trim(a);
+
+			if (a == "" && allow_empty) break;
+			else if (a != "") break;
+		}
 
 		return a;
 	}
@@ -220,6 +190,41 @@ namespace utils {
 
 		// ily w32api /s
 		return pw;
+	}	
+
+	//
+	// for the record, i hate this a LOT
+	//
+	template<typename T>
+	static inline T parse_input(
+		std::string prompt, 
+		std::string expected,
+		std::optional<T>(*parse)(std::string)
+	)
+	{
+		T ret;
+		bool is_valid = false;
+
+		do {
+			std::stringstream ss;
+
+			ss << prompt << RESET << " (" << expected << ")" << RESET;
+
+			std::string _input = get_line(ss.str());
+
+			std::optional<T> _parsed = parse(_input);
+
+			if (_parsed.has_value()) {
+				ret = _parsed.value();
+				is_valid = true;
+			}
+			else {
+				std::cout << RESET << RED << "Invalid Input, expected: " << expected << std::endl;
+			}
+
+		} while (!is_valid);
+
+		return ret;
 	}
 
 	//
@@ -244,11 +249,24 @@ namespace utils {
 		if (is_upper(c)) c += 32;
 	}
 
+	static inline void to_lower(std::string& s) {
+		for (auto& c : s) {
+			to_lower(c);
+		}
+	}
+
 	static inline void to_upper(char& c) {
 		if (is_lower(c)) c -= 32;
 	}
 
+	static inline void to_upper(std::string& s) {
+		for (auto& c : s) {
+			to_upper(c);
+		}
+	}
+
 	static inline int gen_random_int(int min = 0, int max = INT32_MAX) {
+		srand(time(nullptr));
 		return (rand() % max) + min;
 	}
 }

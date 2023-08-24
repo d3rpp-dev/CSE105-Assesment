@@ -22,7 +22,7 @@ public:
 	Location(Coordinate longtitude, Coordinate latitude);
 
 	void get_pos();
-	void display();
+	void display() const;
 
 private:
 	static Direction parse_direction(char from);
